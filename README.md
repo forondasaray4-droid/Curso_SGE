@@ -70,3 +70,41 @@ El archivo `.env` contiene las variables de entorno de la aplicación: configura
 | `FORWARD_DB_PORT` | Puerto expuesto hacia la máquina local (para evitar conflictos con otro MySQL) | `3308` |
 
 **Importante:** cuando se usa Sail, `DB_HOST` debe ser `mysql` (el nombre del servicio en `docker-compose.yml`), no `localhost` ni `127.0.0.1`, porque la base de datos vive dentro de un contenedor Docker aparte.
+
+## Capítulo 3: Autenticación y Personalización Visual
+
+- **Autenticación:** implementada con Laravel Breeze (`composer require laravel/breeze --dev`, `php artisan breeze:install`, stack Blade). Se protegieron las rutas de los módulos (`products`, `categories`, `clients`, `sales`) con el middleware `auth`.
+- **Campo adicional:** se agregó el campo `telefono` al registro de usuarios (migración `add_telefono_to_users_table`), validado como opcional en `RegisteredUserController`.
+- **Capturas:** ver carpeta `docs/visual/` (`captura1_landing.png` a `captura6_nuevo_producto.png`).
+
+### Captura de la Landing Page
+
+![Landing Page de AgroInsumos El Cultivador](docs/visual/captura1_landing.png)
+
+### Explicación de los cambios visuales realizados
+
+Se personalizó por completo la interfaz de autenticación y las vistas principales del ERP para reflejar la identidad de **AgroInsumos El Cultivador S.A.S.**:
+
+- **Logo:** se reemplazó el logo por defecto de Laravel por un logo de texto propio (icono 🌾 + "AgroInsumos" / "El Cultivador"), reutilizado en el login, el registro y la barra de navegación (`resources/views/components/application-logo.blade.php`).
+- **Login (`resources/views/auth/login.blade.php`):** título de página "Iniciar sesión - AgroInsumos El Cultivador", mensaje de bienvenida, íconos en los campos de correo y contraseña, y botón en el color de marca.
+- **Registro (`resources/views/auth/register.blade.php`):** mismo estilo que el login, título "Crear cuenta - AgroInsumos El Cultivador", y un campo adicional de **Teléfono** propio del negocio.
+- **Dashboard (`resources/views/dashboard.blade.php`):** mensaje de bienvenida personalizado (`¡Bienvenido, {{ auth()->user()->name }}!`) y 4 tarjetas de indicadores (KPIs): total de productos, total de clientes, ventas del día y productos con bajo stock. *Nota: estos 4 valores son de ejemplo, ya que los módulos de Productos, Clientes y Ventas todavía no tienen su modelo ni su tabla en la base de datos.*
+- **Barra de navegación (`resources/views/layouts/navigation.blade.php`):** logo de la empresa, enlaces a los módulos principales (Dashboard, Productos, Categorías, Clientes, Ventas) con íconos, y un avatar circular con las iniciales del usuario en vez de solo texto.
+- **Landing Page (`resources/views/welcome.blade.php`):** página de inicio nueva con sección principal (hero) con degradado verde, botones de "Iniciar sesión" y "Crear cuenta", tarjetas describiendo los módulos del sistema, testimonios ilustrativos y pie de página con información de contacto.
+- **Formulario de producto (`resources/views/products/create.blade.php`):** se mantiene la misma línea visual (colores, tipografía, botones) que el resto del sistema, para mostrar coherencia visual aunque el módulo de Productos todavía no guarda datos reales.
+
+### Paleta de colores utilizada
+
+| Color | Uso | Clase de Tailwind |
+|---|---|---|
+| Verde oscuro | Fondo del login/registro y del hero de la landing page | `green-700` / `green-800` / `green-900` |
+| Ámbar | Botones principales de la landing page y acentos | `amber-400` / `amber-500` |
+| Blanco / Gris claro | Fondos de tarjetas y contenido | `white` / `gray-100` |
+| Gris oscuro | Textos principales | `gray-800` / `gray-900` |
+
+### Fuentes y recursos utilizados
+
+- **Tipografía:** [Poppins](https://fonts.google.com/specimen/Poppins) (Google Fonts).
+- **Íconos:** [Font Awesome 6](https://fontawesome.com/) (vía CDN de cdnjs).
+- **Estilos:** Tailwind CSS (incluido por Laravel Breeze).
+- **Logo:** logo de texto propio (sin archivo de imagen), hecho directamente en Blade + Tailwind.
